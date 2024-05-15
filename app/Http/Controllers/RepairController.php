@@ -11,15 +11,52 @@ use App\Models\Client;
 
 class RepairController extends Controller
 {
-    public function index()
+    
+    public function index(Request $request)
     {
-        $repairs = Repair::with(['device.client'])->get();
+
+        
+        $search = $request->query('search');
+    
+        $repairs = Repair::with(['device.client'])
+            ->when($search, function ($query) use ($search) {
+                $query->where('description', 'like', "%{$search}%")
+                    ->orWhereHas('device', function ($query) use ($search) {
+                        $query->where('model', 'like', "%{$search}%")
+                            ->orWhere('brand', 'like', "%{$search}%")
+                            ->orWhere('serial_number', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('device.client', function ($query) use ($search) {
+                        $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%")
+                            ->orWhere('address', 'like', "%{$search}%");
+                    });
+            })
+            ->orWhereHas('device.client', function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%");
+            })
+            ->get();
+    
         $devices = Device::all();
+    
         return view('repairs.index', compact('repairs', 'devices'));
     }
 
+
+
+
+
+
+
+
     public function update(Request $request, Repair $repair)
+    
     {
+        
         $validatedData = $request->validate([
             // client table
             'description' => 'required|string|max:255',
@@ -80,10 +117,19 @@ public function destroy(Repair $repair)
         return redirect()->route('repairs.index')->withSuccess('Repair deleted successfully.');
     }
 
-    public function edit(Repair $repair)
-    {
-        return view('repairs.edit', compact('repair'));
-    }
+ // app/Http/Controllers/RepairController.php
+
+// ...
+
+public function edit(Repair $repair)
+{
+    $deviceModels = Device::distinct('model')->pluck('model');
+    $deviceBrands = Device::distinct('brand')->pluck('brand');
+    $warrantyProviders = Device::distinct('warranty_provider')->pluck('warranty_provider'); // retrieve warranty providers from database
+    return view('repairs.edit', compact('repair', 'deviceModels', 'deviceBrands', 'warrantyProviders'));
+}
+
+// ...
 
     public function create()
 {
@@ -99,10 +145,10 @@ public function store(Request $request)
 
         'device_model' => 'required|string|max:255',
         'device_brand' => 'required|string|max:255',
-        'device_serial_number' => 'required|string|max:255',
+        'device_serial_number' => 'required|string|max:255|unique:devices,serial_number',
         'device_warranty_expiry_date' => 'required|date',
         'device_warranty_provider' => 'required|string|max:255',
-        'device_warranty_claim_number' => 'required|string|max:255',
+        'device_warranty_claim_number' => 'required|string|max:255|unique:devices,warranty_claim_number',
 
         'client_name' => 'required|string|max:255',
         'client_email' => 'required|string|max:255',
@@ -138,9 +184,4 @@ public function store(Request $request)
     ]);
     return redirect()->route('repairs.index')->with('success', 'Repair created successfully.');
 }
-
-
-
-
-
 }

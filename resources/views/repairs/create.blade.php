@@ -27,7 +27,7 @@
 
         <div class="form-group">
             <label for="client_phone">clienta Telefon</label>
-            <input type="text" class="form-control" id="client_phone" name="client_phone">
+            <input type="number" class="form-control" id="client_phone" name="client_phone">
         </div>
 
         <div class="form-group">
@@ -39,12 +39,25 @@
 
         <div class="form-group">
             <label for="device_model">Urzadzenie Model</label>
-            <input type="text" class="form-control" id="device_model" name="device_model">
+            <select class="form-control" id="device_model" name="device_model">
+                @foreach (\App\Models\Device::distinct('Model')->pluck('model') as $model)
+                <option value="{{ $model }}">{{ $model }}</option>
+                @endforeach
+            </select>
+            
         </div>
 
+
+
+
+
         <div class="form-group">
-            <label for="device_brand">Urzadzenie Marka</label>
-            <input type="text" class="form-control" id="device_brand" name="device_brand">
+        <label for="device_brand">Urzadzenie Marka</label>
+        <select class="form-control" id="device_brand" name="device_brand">
+        @foreach (\App\Models\Device::distinct('brand')->pluck('brand') as $brand)
+            <option value="{{ $brand }}">{{ $brand }}</option>
+        @endforeach
+        </select>
         </div>
 
         <div class="form-group">
@@ -58,13 +71,21 @@
         </div>
 
         <div class="form-group">
-            <label for="device_warranty_provider">Urzadzenie Dostawca gwarancji</label>
-            <input type="text" class="form-control" id="device_warranty_provider" name="device_warranty_provider">
+    <label for="device_warranty_provider">Urzadzenie Dostawca gwarancji</label>
+    @foreach (\App\Models\Device::distinct('warranty_provider')->pluck('warranty_provider') as $provider)
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="device_warranty_provider" id="device_warranty_provider_{{ $provider }}" value="{{ $provider }}">
+            <label class="form-check-label" for="device_warranty_provider_{{ $provider }}">
+                {{ $provider }}
+            </label>
         </div>
+    @endforeach
+</div>
 
         <div class="form-group">
             <label for="device_warranty_claim_number">Urzadzenie Numer gwarancji</label>
             <input type="text" class="form-control" id="device_warranty_claim_number" name="device_warranty_claim_number">
+            
         </div>
 
         <div class="form-group">

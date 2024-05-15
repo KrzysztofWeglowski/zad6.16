@@ -21,25 +21,33 @@
 
 <div class="form-group">
     <label for="device_client_phone">phone</label>
-    <input type="tel" name="device[client][phone]" id="device_client_phone" value="{{ old('device.client.phone', $repair->device->client->phone) }}" class="form-control">
+    <input type="number" name="device[client][phone]" id="device_client_phone" value="{{ old('device.client.phone', $repair->device->client->phone) }}" class="form-control">
 </div>
 
 <div class="form-group">
     <label for="device_client_address">adress:</label>
-    <input type="tel" name="device[client][address]" id="device_client_address" value="{{ old('device.client.address', $repair->device->client->address) }}" class="form-control">
+    <input type="addres" name="device[client][address]" id="device_client_address" value="{{ old('device.client.address', $repair->device->client->address) }}" class="form-control">
 </div>
 
 
 
 <div class="form-group">
-        <label for="device_brand">marka:</label>
-        <input type="text" name="device[brand]" id="device_brand" value="{{ old('device.brand', $repair->device->brand) }}" class="form-control">
-    </div>
+    <label for="device_brand">marka:</label>
+    <select name="device[brand]" id="device_brand" class="form-control">
+        @foreach ($deviceBrands as $brand)
+            <option value="{{ $brand }}" {{ old('device.brand', $repair->device->brand) == $brand ? 'selected' : '' }}>{{ $brand }}</option>
+        @endforeach
+    </select>
+</div>
 
     <div class="form-group">
-        <label for="device_model">model:</label>
-        <input type="text" name="device[model]" id="device_model" value="{{ old('device.model', $repair->device->model) }}" class="form-control">
-    </div>
+    <label for="device_model">model:</label>
+    <select name="device[model]" id="device_model" class="form-control">
+        @foreach ($deviceModels as $model)
+            <option value="{{ $model }}" {{ old('device.model', $repair->device->model) == $model ? 'selected' : '' }}>{{ $model }}</option>
+        @endforeach
+    </select>
+</div>
 
 
 
@@ -60,9 +68,14 @@
 
 
 <div class="form-group">
-    <label for="device_warranty_provider">Dostawca gwarancji</label>
-    <input type="text" name="device[warranty_provider]" id="device_warranty_provider" value="{{ old('device.warranty_provider', $repair->device->warranty_provider) }}" class="form-control">
-</div>
+        <label for="device_warranty_provider">Dostawca gwarancji</label>
+        @foreach ($warrantyProviders as $provider)
+            <div class="form-check">
+                <input type="radio" name="device[warranty_provider]" id="device_warranty_provider_{{ $provider }}" value="{{ $provider }}" {{ old('device.warranty_provider', $repair->device->warranty_provider) == $provider ? 'checked' : '' }}>
+                <label for="device_warranty_provider_{{ $provider }}">{{ $provider }}</label>
+            </div>
+        @endforeach
+    </div>
 
 
 

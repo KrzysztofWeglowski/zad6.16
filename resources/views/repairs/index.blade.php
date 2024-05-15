@@ -1,13 +1,21 @@
-
-
 @include('shered.html')
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 <body>
 
 @include('shered.nav')
 @can('is-admin') 
+
 <div class="container">
+  
+<form class="form-inline my-2 my-lg-0" action="{{ route('repairs.index') }}" method="GET">
+    <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" value="">Search reset</button>
+</form>
   <div class="row">
+    <div class="col-md-12 mb-3">
+    <a href="{{ route('repairs.create') }}" class="btn btn-primary">Create</a>
+    </div>
     @foreach($repairs as $repair)
     <div class="col-md-6 mb-3">
       <div class="card">
@@ -45,7 +53,7 @@
   </div>
 
 
-  <a href="{{ route('repairs.create') }}" class="btn btn-primary">Create</a>
+  
 </div>
 
 @else
@@ -60,4 +68,3 @@
 
 </body>
 </html>
-

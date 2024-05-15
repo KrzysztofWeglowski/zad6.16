@@ -21,5 +21,9 @@ class Repair extends Model
     {
         return $this->belongsTo(Device::class);
     }
+    public function owns(Repair $repair): bool
+    {
+        return $this->id === $repair->client->user_id;
+    }
 }
 

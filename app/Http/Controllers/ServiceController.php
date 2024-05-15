@@ -7,6 +7,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Service;
 
+use Illuminate\Support\Facades\Storage;
+
 class ServiceController extends Controller
 {
     /**
@@ -39,56 +41,50 @@ class ServiceController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric|min:1',
-            'img' => 'nullable|string|max:255',
+            'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('img')) {
+            $validatedData['img'] = $this->uploadImage($request->file('img'));
+        }
 
         Service::create($validatedData);
 
         return redirect()->route('RepairVault.main')->with('success', 'Service created successfully.');
     }
 
-    /**
-     * Display the specified service.
-     */
-    public function show(Service $service)
-    {
-        return view('RepairVault.show', compact('service'));
-    }
-
-    /**
-     * Display the form for editing the specified service.
-     */
-    public function edit(Service $service)
-    {
-        return view('RepairVault.edit', compact('service'));
-    }
-
-    /**
-     * Update the specified service in the storage.
-     */
     public function update(Request $request, Service $service)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric|min:1',
-            'img' => 'nullable|string|max:255',
+            'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        if ($request->hasFile('img')) {
+            $validatedData['img'] = $this->uploadImage($request->file('img'));
+        }
 
         $service->update($validatedData);
 
         return redirect()->route('RepairVault.main')->with('success', 'Service updated successfully.');
     }
 
-    /**
-     * Remove the specified service from the storage.
-     */
-    public function destroy(Service $service)
+    private function uploadImage($image)
     {
-        $service->delete();
-
-        return redirect()->route('RepairVault.main')->with('success', 'Service deleted successfully.');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        $imagePath = $image->storeAs('public/images', $imageName);
+        return $imageName;
     }
 
-    //...
+    public function search(Request $request)
+    {
+        $services = Service::where('name', 'like', '%' . $request->input('search') . '%')
+            ->orWhere('description', 'like', '%' . $request->input('search') . '%')
+            ->orWhere('price', 'like', '%' . $request->input('search') . '%')
+            ->get();
+
+        return view('RepairVault.main', compact('services'));
+    }
 }

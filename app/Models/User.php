@@ -47,4 +47,8 @@ class User extends Authenticatable
     protected $attributes = [
         'role_id' => 2, 
     ];
+    public function isAdmin(): bool
+{
+    return $this->role === 'admin'; // or whatever role you use for admins
+}
 }
