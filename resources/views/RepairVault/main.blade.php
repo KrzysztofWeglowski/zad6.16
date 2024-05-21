@@ -10,8 +10,8 @@
             <form action="{{ route('RepairVault.search') }}" method="GET" class="form-inline mb-2">
                 @csrf
                 <input type="search" name="search" class="form-control mr-2" placeholder="Search...">
-                <button type="submit" class="btn btn-danger">Search</button>
-                <button type="submit" class="btn btn-secondary ml-2" name="reset" value="">Reset search</button>
+                <button type="submit" class="btn btn-danger mt-2">Search</button>
+    <button type="submit" class="btn btn-secondary ml-2 mt-2" name="reset" value="">Reset search</button>
             </form>
             @can('is-admin')
                 <a href="{{ route('RepairVault.create') }}" class="btn btn-primary btn-block mb-2">Create</a>

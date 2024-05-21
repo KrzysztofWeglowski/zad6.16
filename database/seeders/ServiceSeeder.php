@@ -13,6 +13,7 @@ class ServiceSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('services')->orderBy('id')->take(10)->delete();
         //
         DB::table('services')->insert([
             [

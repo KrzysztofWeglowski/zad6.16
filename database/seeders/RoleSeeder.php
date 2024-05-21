@@ -20,7 +20,7 @@ class RoleSeeder extends Seeder
         
 
 
-
+        DB::table('clients')->orderBy('id')->take(10)->delete();
         Schema::withoutForeignKeyConstraints(function () {
             DB::table('roles')->truncate();
         });

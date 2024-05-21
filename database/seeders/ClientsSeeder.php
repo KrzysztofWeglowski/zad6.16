@@ -14,6 +14,7 @@ class ClientsSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::table('clients')->orderBy('id')->take(10)->delete();
         //
         DB::table('clients')->insert([
             [
