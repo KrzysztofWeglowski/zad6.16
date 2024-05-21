@@ -14,8 +14,7 @@ class RepairsSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        DB::table('repairs')->orderBy('id')->take(10)->delete();
+       
         DB::table('repairs')->insert([
             [
                 'id' =>1,

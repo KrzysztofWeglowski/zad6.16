@@ -14,9 +14,7 @@ class DevicesSeeder extends Seeder
     public function run(): void
     {
         //
-        DB::table('devices')->orderBy('id')->limit(10)->delete();
-
-
+       
         DB::table('devices')->insert([
             [
                 'id' => 1,
