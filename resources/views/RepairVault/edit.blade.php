@@ -1,10 +1,15 @@
-<!-- repairs/edit.blade.php -->
-
+<!-- resources/views/repairs/create.blade.php -->
 @can('is-admin')
-    @include('shered.html')
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
-    <body>
+    
 
+@extends('shered.html')
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+<body>
+
+    @include('shered.nav')
+    <div class="container">
     <h1>Edit Service</h1>
 
     <form method="POST" action="{{ route('RepairVault.update', $service->id) }}" enctype="multipart/form-data">
@@ -36,6 +41,10 @@
 
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
+   
+    </div>
+    @include('shered.footer')
 
-    </body>
+</body>
+</html>
 @endcan

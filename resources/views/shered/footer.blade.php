@@ -17,10 +17,10 @@
             <div class="col">
                 <h5>Media społecznościowe</h5>
                 <p>
-                    <a href="#"><img src="img/facebook.png" alt="Facebook" width="30px" height="30px"></a>
-                    <a href="#"><img src="img/twitter.png" alt="Twitter" width="30px" height="30px"></a>
-                    <a href="#"><img src="img/instagram.png" alt="Instagram" width="30px" height="30px"></a>
-                    <a href="#"><img src="img/linkedin.png" alt="LinkedIn" width="30px" height="30px"></a>
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">LinkedIn</a>
                 </p>
             </div>
         </div>

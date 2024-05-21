@@ -10,7 +10,7 @@
 <body>
 
     @include('shered.nav')
-
+    <div class="container">
     <h1>Stwórz Servis</h1>
 
     <form action="{{ route('RepairVault.store') }}" method="POST" enctype="multipart/form-data"> <!-- added enctype -->
@@ -38,8 +38,12 @@
 
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
-
+    </div>
     @include('shered.footer')
+
+</body>
+</html>
+@include('shered.footer')
 
 </body>
 </html>

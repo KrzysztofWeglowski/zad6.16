@@ -70,6 +70,12 @@ class ServiceController extends Controller
 
         return redirect()->route('RepairVault.main')->with('success', 'Service updated successfully.');
     }
+    public function destroy(Service $service)
+    {
+        
+            $service->delete();
+            return redirect()->route('RepairVault.main')->with('success', 'Service updated successfully.');       
+    }
 
     private function uploadImage($image)
     {
@@ -86,5 +92,9 @@ class ServiceController extends Controller
             ->get();
 
         return view('RepairVault.main', compact('services'));
+    }
+    public function edit(Request $request, Service $service)
+    {
+        return view('RepairVault.edit', compact('service'));
     }
 }

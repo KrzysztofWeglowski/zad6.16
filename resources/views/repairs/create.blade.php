@@ -9,7 +9,7 @@
 <body>
 
     @include('shered.nav')
-
+    <div class="container">
     <h1>Stwórz Repair</h1>
 
     <form action="{{ route('repairs.store') }}" method="POST">
@@ -105,7 +105,7 @@
 
         <button type="submit" class="btn btn-primary">Create</button>
     </form>
-
+    </div>
     @include('shered.footer')
 
 </body>

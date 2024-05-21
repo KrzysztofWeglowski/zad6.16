@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Repair;
 use App\Models\Device;
 use App\Models\Client;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class RepairController extends Controller
 {
@@ -54,29 +56,35 @@ class RepairController extends Controller
 
 
     public function update(Request $request, Repair $repair)
-    
-    {
-        
-        $validatedData = $request->validate([
-            // client table
-            'description' => 'required|string|max:255',
-            'repair_date' => 'required|date',
-            'repair_cost' => 'required|numeric|min:0',
+{
+    $validatedData = $request->validate([
+        'description' => 'required|string|max:255',
+        'repair_date' => 'required|date',
+        'repair_cost' => 'required|numeric|min:0',
+        'device.model' => 'required|string|max:255',
+        'device.brand' => 'required|string|max:255',
+        'device.serial_number' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('devices', 'serial_number')->ignore($repair->device->id),
+        ],
+        'device.warranty_expiry_date' => 'required|date',
+        'device.warranty_provider' => 'required|string|max:255',
+        'device.warranty_claim_number' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('devices', 'warranty_claim_number')->ignore($repair->device->id),
+        ],
+        'device.client.name' => 'required|string|max:255',
+        'device.client.email' => 'required|string|max:255',
+        'device.client.phone' => 'required|numeric|min:100000000',
+        'device.client.address' => 'required|string|max:255',
+    ]);
 
-            // Devices table
-            'device.model' => 'required|string|max:255',
-            'device.brand' => 'required|string|max:255',
-            'device.serial_number' => 'required|string|max:255',
-            'device.warranty_expiry_date' => 'required|date',
-            'device.warranty_provider' => 'required|string|max:255',
-            'device.warranty_claim_number' => 'required|string|max:255',
-            // client table
-            'device.client.name' => 'required|string|max:255',
-            'device.client.email' => 'required|string|max:255',
-            'device.client.phone' => 'required|numeric|min:100000000',
-            'device.client.address' => 'required|string|max:255',
-
-        ]);
+    try {
+        DB::beginTransaction();
 
         $repair->update([
             'description' => $validatedData['description'],
@@ -84,32 +92,19 @@ class RepairController extends Controller
             'repair_cost' => $validatedData['repair_cost'],
         ]);
 
+        $repair->device->update($validatedData['device']);
 
-        $repair->device->update([
-            'model' => $validatedData['device']['model'],
-            'brand' => $validatedData['device']['brand'],
-            'serial_number' => $validatedData['device']['serial_number'],
-            'warranty_expiry_date' => $validatedData['device']['warranty_expiry_date'],
-            'warranty_provider' => $validatedData['device']['warranty_provider'],
-            'warranty_claim_number' => $validatedData['device']['warranty_claim_number'],
+        $repair->device->client->update($validatedData['device']['client']);
 
-        ]);
-
-
-
-
-        $repair->device->client->update([
-            'name' => $validatedData['device']['client']['name'],
-            'email' => $validatedData['device']['client']['email'],
-            'phone' => $validatedData['device']['client']['phone'],
-            'address' => $validatedData['device']['client']['address'],
-        ]);
-
-
-
+        DB::commit();
 
         return redirect()->route('repairs.index')->with('success', 'Repair updated successfully.');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Failed to update repair. Please try again.');
     }
+}
+
 
 public function destroy(Repair $repair)
     {

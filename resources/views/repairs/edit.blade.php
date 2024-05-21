@@ -3,7 +3,8 @@
 @include('shered.html')
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 <body>
-
+@include('shered.nav')
+<div class="container">
 <h1>Edytuj Repair</h1>
 
 <form method="POST" action="{{ route('repairs.update', $repair->id) }}">
@@ -100,6 +101,8 @@
 
     <button type="submit" class="btn btn-primary">Update</button>
 </form>
+</div>
+@include('shered.footer')
 
 </body>
 </html>
