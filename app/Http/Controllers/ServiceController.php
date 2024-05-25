@@ -1,22 +1,15 @@
 <?php
 
-// app/Http/Controllers/ServiceController.php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Service;
-
 use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-
-    /**
-     * Display a listing of the resource.
+     * Wyświetla listę zasobów.
      */
     public function index()
     {
@@ -33,7 +26,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Store a newly created service in storage.
+     * Przechowuje nowo utworzoną usługę w magazynie.
      */
     public function store(Request $request)
     {
@@ -42,6 +35,15 @@ class ServiceController extends Controller
             'description' => 'nullable|string',
             'price' => 'nullable|numeric|min:1',
             'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ], [
+            'name.required' => 'Pole nazwa jest wymagane.',
+            'name.string' => 'Nazwa musi być ciągiem znaków.',
+            'name.max' => 'Nazwa nie może przekraczać 255 znaków.',
+            'price.numeric' => 'Cena musi być liczbą.',
+            'price.min' => 'Cena musi wynosić co najmniej 1.',
+            'img.image' => 'Plik musi być obrazem.',
+            'img.mimes' => 'Obraz musi być w formacie: jpg, jpeg, png.',
+            'img.max' => 'Obraz nie może przekraczać 2048 kilobajtów.',
         ]);
 
         if ($request->hasFile('img')) {
@@ -50,7 +52,7 @@ class ServiceController extends Controller
 
         Service::create($validatedData);
 
-        return redirect()->route('RepairVault.main')->with('success', 'Service created successfully.');
+        return redirect()->route('RepairVault.main')->with('success', 'Usługa utworzona pomyślnie.');
     }
 
     public function update(Request $request, Service $service)
@@ -60,40 +62,69 @@ class ServiceController extends Controller
             'description' => 'nullable|string',
             'price' => 'nullable|numeric|min:1',
             'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ], [
+            'name.required' => 'Pole nazwa jest wymagane.',
+            'name.string' => 'Nazwa musi być ciągiem znaków.',
+            'name.max' => 'Nazwa nie może przekraczać 255 znaków.',
+            'price.numeric' => 'Cena musi być liczbą.',
+            'price.min' => 'Cena musi wynosić co najmniej 1.',
+            'img.image' => 'Plik musi być obrazem.',
+            'img.mimes' => 'Obraz musi być w formacie: jpg, jpeg, png.',
+            'img.max' => 'Obraz nie może przekraczać 2048 kilobajtów.',
         ]);
 
         if ($request->hasFile('img')) {
+            // Usunięcie starego obrazu, jeśli istnieje
+            if ($service->img && Storage::exists('public/images/' . $service->img)) {
+                Storage::delete('public/images/' . $service->img);
+            }
+
             $validatedData['img'] = $this->uploadImage($request->file('img'));
         }
 
         $service->update($validatedData);
 
-        return redirect()->route('RepairVault.main')->with('success', 'Service updated successfully.');
+        return redirect()->route('RepairVault.main')->with('success', 'Usługa zaktualizowana pomyślnie.');
     }
+
     public function destroy(Service $service)
     {
-        
-            $service->delete();
-            return redirect()->route('RepairVault.main')->with('success', 'Service updated successfully.');       
+        // Usunięcie obrazu, jeśli istnieje
+        if ($service->img && Storage::exists('public/images/' . $service->img)) {
+            Storage::delete('public/images/' . $service->img);
+        }
+
+        $service->delete();
+
+        return redirect()->route('RepairVault.main')->with('success', 'Usługa usunięta pomyślnie.');
     }
 
     private function uploadImage($image)
     {
         $imageName = time() . '.' . $image->getClientOriginalExtension();
-        $imagePath = $image->storeAs('public/images', $imageName);
+        $image->storeAs('public/images', $imageName);
         return $imageName;
     }
 
     public function search(Request $request)
     {
-        $services = Service::where('name', 'like', '%' . $request->input('search') . '%')
-            ->orWhere('description', 'like', '%' . $request->input('search') . '%')
-            ->orWhere('price', 'like', '%' . $request->input('search') . '%')
+        $validatedData = $request->validate([
+            'search' => 'required|string|max:255',
+        ], [
+            'search.required' => 'Pole wyszukiwania jest wymagane.',
+            'search.string' => 'Wyszukiwanie musi być ciągiem znaków.',
+            'search.max' => 'Wyszukiwanie nie może przekraczać 255 znaków.',
+        ]);
+
+        $services = Service::where('name', 'like', '%' . $validatedData['search'] . '%')
+            ->orWhere('description', 'like', '%' . $validatedData['search'] . '%')
+            ->orWhere('price', 'like', '%' . $validatedData['search'] . '%')
             ->get();
 
         return view('RepairVault.main', compact('services'));
     }
-    public function edit(Request $request, Service $service)
+
+    public function edit(Service $service)
     {
         return view('RepairVault.edit', compact('service'));
     }

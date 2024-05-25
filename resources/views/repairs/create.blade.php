@@ -10,103 +10,107 @@
 
     @include('shered.nav')
     <div class="container">
-    <h1>Stwórz Repair</h1>
+    <h1>Stwórz Naprawę</h1>
 
-    <form action="{{ route('repairs.store') }}" method="POST">
+    <form action="{{ route('repairs.store') }}" method="POST" id="repairForm">
         @csrf
 
         <div class="form-group">
-            <label for="client_name">clienta Imie i nazwisko</label>
-            <input type="text" class="form-control" id="client_name" name="client_name">
+            <label for="client_name">Imię i nazwisko klienta</label>
+            <input type="text" class="form-control" id="client_name" name="client_name" required maxlength="255">
         </div>
 
         <div class="form-group">
-            <label for="client_email">clienta email</label>
-            <input type="email" class="form-control" id="client_email" name="client_email">
+            <label for="client_email">Email klienta</label>
+            <input type="email" class="form-control" id="client_email" name="client_email" required maxlength="255">
         </div>
 
         <div class="form-group">
-            <label for="client_phone">clienta Telefon</label>
-            <input type="number" class="form-control" id="client_phone" name="client_phone">
+            <label for="client_phone">Telefon klienta</label>
+            <input type="number" class="form-control" id="client_phone" name="client_phone" required min="100000000" max="999999999999999">
         </div>
 
         <div class="form-group">
-            <label for="client_address">clienta Adres</label>
-            <input type="text" class="form-control" id="client_address" name="client_address">
+            <label for="client_address">Adres klienta</label>
+            <input type="text" class="form-control" id="client_address" name="client_address" required maxlength="255">
         </div>
 
-
-
         <div class="form-group">
-            <label for="device_model">Urzadzenie Model</label>
-            <select class="form-control" id="device_model" name="device_model">
-                @foreach (\App\Models\Device::distinct('Model')->pluck('model') as $model)
+            <label for="device_model">Model urządzenia</label>
+            <select class="form-control" id="device_model" name="device_model" required>
+                @foreach (\App\Models\Device::distinct('model')->pluck('model') as $model)
                 <option value="{{ $model }}">{{ $model }}</option>
                 @endforeach
             </select>
-            
-        </div>
-
-
-
-
-
-        <div class="form-group">
-        <label for="device_brand">Urzadzenie Marka</label>
-        <select class="form-control" id="device_brand" name="device_brand">
-        @foreach (\App\Models\Device::distinct('brand')->pluck('brand') as $brand)
-            <option value="{{ $brand }}">{{ $brand }}</option>
-        @endforeach
-        </select>
         </div>
 
         <div class="form-group">
-            <label for="device_serial_number">Urzadzenie Numer Seryjny</label>
-            <input type="text" class="form-control" id="device_serial_number" name="device_serial_number">
+            <label for="device_brand">Marka urządzenia</label>
+            <select class="form-control" id="device_brand" name="device_brand" required>
+                @foreach (\App\Models\Device::distinct('brand')->pluck('brand') as $brand)
+                <option value="{{ $brand }}">{{ $brand }}</option>
+                @endforeach
+            </select>
         </div>
 
         <div class="form-group">
-            <label for="device_warranty_expiry_date">Urzadzenie Wygaśnięcie gwarancji</label>
-            <input type="date" class="form-control" id="device_warranty_expiry_date" name="device_warranty_expiry_date">
+            <label for="device_serial_number">Numer seryjny urządzenia</label>
+            <input type="text" class="form-control" id="device_serial_number" name="device_serial_number" required maxlength="255">
         </div>
 
         <div class="form-group">
-    <label for="device_warranty_provider">Urzadzenie Dostawca gwarancji</label>
-    @foreach (\App\Models\Device::distinct('warranty_provider')->pluck('warranty_provider') as $provider)
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="device_warranty_provider" id="device_warranty_provider_{{ $provider }}" value="{{ $provider }}">
-            <label class="form-check-label" for="device_warranty_provider_{{ $provider }}">
-                {{ $provider }}
-            </label>
+            <label for="device_warranty_expiry_date">Data wygaśnięcia gwarancji urządzenia</label>
+            <input type="date" class="form-control" id="device_warranty_expiry_date" name="device_warranty_expiry_date" required>
         </div>
-    @endforeach
-</div>
 
         <div class="form-group">
-            <label for="device_warranty_claim_number">Urzadzenie Numer gwarancji</label>
-            <input type="text" class="form-control" id="device_warranty_claim_number" name="device_warranty_claim_number">
-            
+            <label for="device_warranty_provider">Dostawca gwarancji urządzenia</label>
+            @foreach (\App\Models\Device::distinct('warranty_provider')->pluck('warranty_provider') as $provider)
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="device_warranty_provider" id="device_warranty_provider_{{ $provider }}" value="{{ $provider }}" required>
+                <label class="form-check-label" for="device_warranty_provider_{{ $provider }}">
+                    {{ $provider }}
+                </label>
+            </div>
+            @endforeach
+        </div>
+
+        <div class="form-group">
+            <label for="device_warranty_claim_number">Numer gwarancji urządzenia</label>
+            <input type="text" class="form-control" id="device_warranty_claim_number" name="device_warranty_claim_number" required maxlength="255">
         </div>
 
         <div class="form-group">
             <label for="description">Opis</label>
-            <input type="text" class="form-control" id="description" name="description">
+            <input type="text" class="form-control" id="description" name="description" required maxlength="255">
         </div>
 
         <div class="form-group">
-        <label for="repair_date">Data naprawy</label>
-        <input type="date" class="form-control" id="repair_date" name="repair_date">
+            <label for="repair_date">Data naprawy</label>
+            <input type="date" class="form-control" id="repair_date" name="repair_date" required>
         </div>
 
         <div class="form-group">
-        <label for="repair_cost">Koszt naprawy</label>
-        <input type="number" class="form-control" id="repair_cost" name="repair_cost">
+            <label for="repair_cost">Koszt naprawy</label>
+            <input type="number" class="form-control" id="repair_cost" name="repair_cost" required min="0" step="0.01">
         </div>
 
-        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="submit" class="btn btn-primary">Stwórz</button>
     </form>
     </div>
     @include('shered.footer')
+
+    <script>
+        document.getElementById('repairForm').addEventListener('submit', function(event) {
+            // Custom validation logic (if any) can go here
+            if (!this.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                alert('Proszę wypełnić wszystkie wymagane pola poprawnie.');
+            }
+            this.classList.add('was-validated');
+        }, false);
+    </script>
 
 </body>
 </html>

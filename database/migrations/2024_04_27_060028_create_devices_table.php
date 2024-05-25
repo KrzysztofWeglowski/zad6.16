@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('model');
             $table->string('serial_number')->unique();
             $table->date('warranty_expiry_date')->nullable();
-            $table->string('warranty_provider')->unique();
-            $table->string('warranty_claim_number');
+            $table->string('warranty_provider');
+            $table->string('warranty_claim_number')->unique();
             $table->timestamps();
         });
     }
