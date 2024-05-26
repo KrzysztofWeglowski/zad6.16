@@ -32,15 +32,19 @@ class ServiceController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'nullable|numeric|min:1',
-            'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:1',
+            'img' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'name.required' => 'Pole nazwa jest wymagane.',
             'name.string' => 'Nazwa musi być ciągiem znaków.',
             'name.max' => 'Nazwa nie może przekraczać 255 znaków.',
+            'description.required' => 'Pole opis jest wymagane.',
+            'description.string' => 'Opis musi być ciągiem znaków.',
+            'price.required' => 'Pole cena jest wymagane.',
             'price.numeric' => 'Cena musi być liczbą.',
             'price.min' => 'Cena musi wynosić co najmniej 1.',
+            'img.required' => 'Pole obraz jest wymagane.',
             'img.image' => 'Plik musi być obrazem.',
             'img.mimes' => 'Obraz musi być w formacie: jpg, jpeg, png.',
             'img.max' => 'Obraz nie może przekraczać 2048 kilobajtów.',
@@ -59,13 +63,16 @@ class ServiceController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'nullable|numeric|min:1',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:1',
             'img' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ], [
             'name.required' => 'Pole nazwa jest wymagane.',
             'name.string' => 'Nazwa musi być ciągiem znaków.',
             'name.max' => 'Nazwa nie może przekraczać 255 znaków.',
+            'description.required' => 'Pole opis jest wymagane.',
+            'description.string' => 'Opis musi być ciągiem znaków.',
+            'price.required' => 'Pole cena jest wymagane.',
             'price.numeric' => 'Cena musi być liczbą.',
             'price.min' => 'Cena musi wynosić co najmniej 1.',
             'img.image' => 'Plik musi być obrazem.',
@@ -108,6 +115,13 @@ class ServiceController extends Controller
 
     public function search(Request $request)
     {
+        $submitValue = $request->input('submit');
+        
+        if ($submitValue === ' ') {
+            // This handles the reset button click
+            return redirect()->route('RepairVault.main');
+        }
+
         $validatedData = $request->validate([
             'search' => 'required|string|max:255',
         ], [

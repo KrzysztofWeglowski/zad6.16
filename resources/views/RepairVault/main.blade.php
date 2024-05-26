@@ -7,12 +7,13 @@
 <div class="container mt-5">
     <div class="row mb-3">
         <div class="col">
-            <form action="{{ route('RepairVault.search') }}" method="GET" class="form-inline mb-2">
-                @csrf
-                <input type="search" name="search" class="form-control mr-2" placeholder="Szukaj...">
-                <button type="submit" class="btn btn-danger mt-2">Szukaj</button>
-                <button type="submit" class="btn btn-secondary ml-2 mt-2" name="reset" value="">Resetuj wyszukiwanie</button>
-            </form>
+        <form action="{{ route('RepairVault.search') }}" method="GET" class="form-inline mb-2">
+    @csrf
+    <input type="search" name="search" class="form-control mr-2" placeholder="Szukaj...">
+    <button type="submit" class="btn btn-danger mt-2" name="submit" value="search">Szukaj</button>
+    <a href="{{ route('RepairVault.main') }}" class="btn btn-secondary ml-2 mt-2">Resetuj wyszukiwanie</a>
+</form>
+
             @can('is-admin')
                 <a href="{{ route('RepairVault.create') }}" class="btn btn-primary btn-block mb-2">Stwórz</a>
             @endcan

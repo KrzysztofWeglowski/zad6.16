@@ -14,7 +14,7 @@ class RepairController extends Controller
     public function index(Request $request)
     {
         $search = $request->query('search');
-    
+
         $repairs = Repair::with(['device.client'])
             ->when($search, function ($query) use ($search) {
                 $query->where('description', 'like', "%{$search}%")
@@ -31,10 +31,8 @@ class RepairController extends Controller
                     });
             })
             ->get();
-    
-        $devices = Device::all();
-    
-        return view('repairs.index', compact('repairs', 'devices'));
+
+        return view('repairs.index', compact('repairs'));
     }
 
     public function update(Request $request, Repair $repair)
@@ -63,7 +61,7 @@ class RepairController extends Controller
             'device.client.email' => 'required|string|email|max:255',
             'device.client.phone' => 'required|numeric|digits_between:9,15',
             'device.client.address' => 'required|string|max:255',
-        ]);
+        ], $this->messages(), $this->attributes());
 
         try {
             DB::beginTransaction();
@@ -115,7 +113,10 @@ class RepairController extends Controller
 
     public function create()
     {
-        return view('repairs.create');
+        $deviceModels = Device::distinct('model')->pluck('model');
+        $deviceBrands = Device::distinct('brand')->pluck('brand');
+        $warrantyProviders = Device::distinct('warranty_provider')->pluck('warranty_provider');
+        return view('repairs.create', compact('deviceModels', 'deviceBrands', 'warrantyProviders'));
     }
 
     public function store(Request $request)
@@ -124,19 +125,17 @@ class RepairController extends Controller
             'description' => 'required|string|max:255',
             'repair_date' => 'required|date',
             'repair_cost' => 'required|numeric|min:0',
-
             'device_model' => 'required|string|max:255',
             'device_brand' => 'required|string|max:255',
             'device_serial_number' => 'required|string|max:255|unique:devices,serial_number',
             'device_warranty_expiry_date' => 'required|date',
             'device_warranty_provider' => 'required|string|max:255',
             'device_warranty_claim_number' => 'required|string|max:255|unique:devices,warranty_claim_number',
-
             'client_name' => 'required|string|max:255',
             'client_email' => 'required|string|email|max:255',
             'client_phone' => 'required|numeric|digits_between:9,15',
             'client_address' => 'required|string|max:255',
-        ]);
+        ], $this->messages(), $this->attributes());
 
         try {
             DB::beginTransaction();
@@ -172,5 +171,39 @@ class RepairController extends Controller
             DB::rollBack();
             return redirect()->back()->with('error', 'Nie udało się utworzyć naprawy. Proszę spróbować ponownie.');
         }
+    }
+
+    protected function messages()
+    {
+        return [
+            'required' => 'Pole :attribute jest wymagane.',
+            'string' => 'Pole :attribute musi być ciągiem znaków.',
+            'max' => 'Pole :attribute nie może być dłuższe niż :max znaków.',
+            'date' => 'Pole :attribute musi być prawidłową datą.',
+            'numeric' => 'Pole :attribute musi być liczbą.',
+            'min' => 'Pole :attribute musi mieć wartość co najmniej :min.',
+            'email' => 'Pole :attribute musi być prawidłowym adresem e-mail.',
+            'unique' => 'Pole :attribute musi być unikalne.',
+            'digits_between' => 'Pole :attribute musi mieć od :min do :max cyfr.',
+        ];
+    }
+
+    protected function attributes()
+    {
+        return [
+            'description' => 'Opis',
+            'repair_date' => 'Data naprawy',
+            'repair_cost' => 'Koszt naprawy',
+            'device_model' => 'Model urządzenia',
+            'device_brand' => 'Marka urządzenia',
+            'device_serial_number' => 'Numer seryjny urządzenia',
+            'device_warranty_expiry_date' => 'Data wygaśnięcia gwarancji urządzenia',
+            'device_warranty_provider' => 'Dostawca gwarancji urządzenia',
+            'device_warranty_claim_number' => 'Numer gwarancji urządzenia',
+            'client_name' => 'Imię i nazwisko klienta',
+            'client_email' => 'Email klienta',
+            'client_phone' => 'Telefon klienta',
+            'client_address' => 'Adres klienta',
+        ];
     }
 }
