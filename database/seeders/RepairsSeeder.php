@@ -14,7 +14,8 @@ class RepairsSeeder extends Seeder
      */
     public function run(): void
     {
-       
+        //
+
         DB::table('repairs')->insert([
             [
                 'id' =>1,

@@ -14,7 +14,7 @@ class DevicesSeeder extends Seeder
     public function run(): void
     {
         //
-       
+
         DB::table('devices')->insert([
             [
                 'id' => 1,
